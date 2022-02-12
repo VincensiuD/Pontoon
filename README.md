@@ -6,7 +6,7 @@ Rules:
 
 Player begins by putting a wager to bet for Pairs or Main. Then player will receive 2 cards and the dealer will receive one card.
 
->>> Pairs game
+Pairs game
 If player receives 2 card with the same rank (e.g a pair of 2s, a pair of Js etc), then the player wins the Pairs game.
 Payout for Pairs as follow:
 1. Perfect Pairs (same rank, same suit) = 6 x Wagers
@@ -14,7 +14,7 @@ Payout for Pairs as follow:
 3. Mixed Pairs (same rank, differet colour) = 25 x Wagers
 
 
->>> Main game
+Main game
 Each card has the value represented by the nominal of the cards (e.g. 2Spade has a value of 2, 10Diamond has the value of 10 etc)
 Jack, Queen & King cards have the value of 10 and are called Picture cards
 Ace cards have the value of 11 or 1 whichever is more advantageous to the player.
