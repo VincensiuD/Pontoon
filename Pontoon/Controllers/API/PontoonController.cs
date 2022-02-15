@@ -199,10 +199,10 @@ namespace Pontoon.Controllers.API
 
                     int[] playerCardsIds = new int[2];
 
-                    for (int i = 0; i < 2; i++)
-                    {
-                        playerCardsIds[i] = playerCards[i].Id;
-                    }
+                  
+                    playerCardsIds[0] = playerCards[1].Id;
+                    playerCardsIds[1] = playerCards[0].Id;
+
 
                     playerCards = new List<Card>();
                  
@@ -212,13 +212,22 @@ namespace Pontoon.Controllers.API
 
                     playerCardsA.Add(allCardsList.FirstOrDefault(x => x.Id == playerCardsIds[0]));
                     List<string> playerCardsADisplayCodes = new List<string>();
-                    playerCardsADisplayCodes.Add(playerCardsA[0].DisplayCode);
 
                     playerCardsB.Add(allCardsList.FirstOrDefault(x => x.Id == playerCardsIds[1]));
                     List<string> playerCardsBDisplayCodes = new List<string>();
-                    playerCardsBDisplayCodes.Add(playerCardsB[0].DisplayCode);
+
                     _applicationDbContext.SaveChanges();
-                    //   Card withdrawnCard = _pontoonServices.DrawRandomCard();
+
+                   Card withdrawnCardA = _pontoonServices.DrawRandomCard();
+                   Card withdrawnCardB = _pontoonServices.DrawRandomCard();
+
+                    playerCardsA.Add(withdrawnCardA);
+                    playerCardsB.Add(withdrawnCardB);
+
+                    _applicationDbContext.SaveChanges();
+
+                    playerCardsADisplayCodes = _pontoonServices.GetDisplayCodes(playerCardsA);
+                    playerCardsBDisplayCodes = _pontoonServices.GetDisplayCodes(playerCardsB);
 
                     Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x => x.Id == 1);
 

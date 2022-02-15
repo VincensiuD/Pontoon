@@ -134,6 +134,25 @@ namespace Pontoon.Services
             return card.Rank == "A" ? true : false;
         }
 
+
+        /// <summary>
+        /// Get all the displayCodes from a List of cards
+        /// </summary>
+        /// <param name="listOfCards"></param>
+        /// <returns></returns>
+        public List<string> GetDisplayCodes(List<Card> listOfCards)
+        {
+            List<string> displayCodes = new List<string>();
+
+            foreach (var item in listOfCards)
+            {
+                displayCodes.Add(item.DisplayCode);
+            }
+
+            return displayCodes;
+        }
+
+
         /// <summary>
         /// Sum the total values of Cards in a given list.
         /// This method only applies where there is no ace in the list  or the smallest value is desired
