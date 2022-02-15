@@ -1,12 +1,13 @@
 import React,  { useState, useEffect } from "react";
 import { useNavigate,Link } from "react-router-dom";
 import { generateImage } from "./picComponent";
+import { Mainstyle } from "./styleLibrary";
 
-const navigate = useNavigate;
+
 
 
 export function SplitGame(){
-
+const navigate = useNavigate();
 let [playerCardsA, setPlayerCardsA] = useState([]);
 let [playerCardsB, setPlayerCardsB] = useState([]);
 let [dealerCards, setDealerCards] = useState([]);
@@ -41,27 +42,26 @@ async function hit(){
 
 } 
 
-useEffect(() => {
-    
+useEffect(() => { 
 async function initial3cards() {
-    let response = await fetch('https://localhost:44321/API/BlackJack/InitialDeal') 
+    let response = await fetch('https://localhost:7100/API/Pontoon/SplittingCard') 
 
     if (!response.ok) {
        navigate("/errorPage");
       }   
     else{
        let data = await response.json();
-       setPlayerCardsA(data.listOfPlayerCardsA);
-       setPlayerCardsB(data.listOfPlayerCardsB);
-       setDealerCards(data.listOfDealerCards);
-       setMainPayOut(data.mainBetResult);
+       setPlayerCardsA(data.playerCardsBDisplayCodes,);
+       setPlayerCardsB(data.playerCardsADisplayCodes,);
+       setDealerCards(data.dealerCardsDisplayCodes,);
+      // setMainPayOut(data.mainBetResult);
        setWallet(data.wallet);
        setHitBtn(data.hitBtn);
-       setPlayerTotalA(data.playerTotalA);
-       setDealerTotal(data.dealerTotal);
-       setPlayerTotal2A(data.playerTotal2A);
-       setPlayerTotalB(data.playerTotalB);
-       setPlayerTotal2B(data.playerTotal2B);
+      // setPlayerTotalA(data.playerTotalA);
+       //setDealerTotal(data.dealerTotal);
+       //setPlayerTotal2A(data.playerTotal2A);
+       //setPlayerTotalB(data.playerTotalB);
+       //setPlayerTotal2B(data.playerTotal2B);
     }
        
  }
@@ -78,7 +78,7 @@ async function initial3cards() {
                 <img src={generateImage(dealerCards[0])} alt="dealer's card image" height={100} />
             </div>
             <div>
-                <div>
+                <div style={Mainstyle.split}>
                 <p>
                     Player's card total : {playerTotalA} {playerTotal2A}
                 </p>

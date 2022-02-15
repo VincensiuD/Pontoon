@@ -12,7 +12,7 @@ export function BettingPageFunction() {
 
     useEffect(() => {
         console.log("fetching money")
-        fetch('https://localhost:44321/API/BlackJack/PlaceYourBet')
+        fetch('https://localhost:7100/API/Pontoon/PlaceYourBet')
             .then(response => response.json())
             .then(data => setMoney(data))
     }, []);
@@ -54,7 +54,7 @@ export function BettingPageFunction() {
         }
         else {
             async function submitBet(){
-            let response = await fetch('https://localhost:44321/API/BlackJack/Wagers', {
+            let response = await fetch('https://localhost:7100/API/Pontoon/Wagers', {
                 method: 'POST', // or 'PUT'
                 headers: {
                     'Content-Type': 'application/json',
@@ -82,8 +82,8 @@ export function BettingPageFunction() {
     return (
         <div>
             <h3>Place your bet</h3>
-            <WagerSection title="Pair bet" type="pair" value={pairsWager} onModify={addWager} increments={[-100, -10, 10, 100]} />
-            <WagerSection title="Main bet" type="main" value={mainWager} onModify={addWager} increments={[-100, -10, 10, 100]} />
+            <WagerSection title="Pair bet" type="pair" value={pairsWager} onModify={addWager} increments={[-500,-100, -10, 10, 100,500]} />
+            <WagerSection title="Main bet" type="main" value={mainWager} onModify={addWager} increments={[-500,-100, -10, 10, 100,500]} />
             <br />
             <br />
             <div>

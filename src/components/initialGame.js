@@ -17,7 +17,8 @@ let [splitBtn,setSplitBtn] = useState(false);
 let [dealerTotal,setDealerTotal] = useState(0);
 let [playerTotal,setPlayerTotal] = useState(0);
 let [playerTotal2,setPlayerTotal2] = useState("");
-
+let [message,setMessage] = useState("")
+let [endGame,setEndGame] = useState(false)
 function checkConsole() {
     console.log(playerCards);
 }
@@ -29,7 +30,7 @@ async function split(){
 }
 
 async function stand(){
-    let response = await fetch('https://localhost:44321/API/BlackJack/DealerPlay'); 
+    let response = await fetch('https://localhost:7100/API/Pontoon/DealerPlay'); 
     if (!response.ok) {
         navigate("/errorPage");
         console.log("triggered")
@@ -37,10 +38,10 @@ async function stand(){
      else{
     let data = await response.json();
     console.log(data);
-    setDealerCards(data.listOfDealerCards);
+    setDealerCards(data.dealerCardsDisplayCodes);
     setMainPayOut(data.mainBetResult);
     setDealerTotal(data.dealerTotal);
-    setWallet(data.wallet);
+    setWallet(data.money);
     setHitBtn(true);
     setSplitBtn(true);
     }
@@ -48,9 +49,26 @@ async function stand(){
 }
 
 
+async function double(){
+     let response = await fetch('https://localhost:7100/API/Pontoon/Doubling'); 
+     if (response.ok) {
+     let data = await response.json();
+     console.log(data);
+     setWallet(data.money);
+     setDealerCards(data.dealerCardsDisplayCodes);
+     setDealerTotal(data.dealerTotal);
+     setPlayerCards(data.playerCardsDisplayCodes);
+     setMainPayOut(data.mainBetResult);
+     setPlayerTotal(data.playerTotal);
+     setPlayerTotal2(data.playerTotal2);
+     setHitBtn(data.hitBtn);
+     setSplitBtn(true);
+    }
+}
+
 async function hit(){
 
-   let response = await fetch('https://localhost:44321/API/BlackJack/AddCard'); 
+   let response = await fetch('https://localhost:7100/API/Pontoon/AddCard'); 
     if (!response.ok) {
         navigate("/errorPage");
         console.log("triggered")
@@ -58,13 +76,14 @@ async function hit(){
      else{
     let data = await response.json();
     console.log(data);
-    setPlayerCards(data.listOfPlayerCards);
+    setPlayerCards(data.playerCardsDisplayCodes);
     setMainPayOut(data.mainBetResult);
     setPlayerTotal(data.playerTotal);
     setPlayerTotal2(data.playerTotal2);
     setHitBtn(data.hitBtn);
     setSplitBtn(true);
-    setWallet(data.wallet);
+    setWallet(data.money);
+return hitBtn;
     }
 
 } 
@@ -72,18 +91,18 @@ async function hit(){
 useEffect(() => {
     
 async function initial3cards() {
-    let response = await fetch('https://localhost:44321/API/BlackJack/InitialDeal') 
+    let response = await fetch('https://localhost:7100/API/Pontoon/InitialDeal') 
 
     if (!response.ok) {
        navigate("/errorPage");
       }   
     else{
        let data = await response.json();
-       setPlayerCards(data.listOfPlayerCards);
-       setDealerCards(data.listOfDealerCards);
+       setPlayerCards(data.playerCardsDisplayCodes);
+       setDealerCards(data.dealerCardsDisplayCodes);
        setPairsPayOut(data.pairsBetResult);
        setMainPayOut(data.mainBetResult);
-       setWallet(data.wallet);
+       setWallet(data.money);
        setSplitBtn(data.splitBtn);
        setHitBtn(data.hitBtn);
        setPlayerTotal(data.playerTotal);
@@ -103,7 +122,7 @@ async function initial3cards() {
                     Dealer's card total : {dealerTotal}
                 </p>
                 {/* <img src={generateImage(dealerCards[0])} alt="dealer's card image" height={100} /> */}
-                {dealerCards.map( (value,index) =>
+                {dealerCards.map( (value,index) => 
                 <img key={index} src={generateImage(value)} alt="dealer's card images" height={100} />
                 )}
             </div>
@@ -118,7 +137,7 @@ async function initial3cards() {
             <div>
                 <button disabled={hitBtn} onClick={hit}>Hit</button>
                 <button disabled={hitBtn} onClick={stand} >Stand</button>
-                <button disabled={hitBtn}>Double</button>
+                <button disabled={hitBtn} onClick={double}>Double</button>
                 <button disabled={splitBtn} onClick={split}>Split</button>
             </div>
             <button onClick={checkConsole}>Check Console</button>
