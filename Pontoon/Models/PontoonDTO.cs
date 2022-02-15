@@ -22,5 +22,11 @@ namespace Pontoon.Models
         public string DisplayMessage { get; set; }
         public List<string> PlayerCardsADisplayCodes  { get; set; }
         public List<string> PlayerCardsBDisplayCodes { get; set; }
+
+
+
     }
+
+   
+
 }

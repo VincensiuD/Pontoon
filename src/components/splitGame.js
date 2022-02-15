@@ -19,6 +19,8 @@ let [playerTotalA,setPlayerTotalA] = useState(0);
 let [playerTotal2A,setPlayerTotal2A] = useState("");
 let [playerTotalB,setPlayerTotalB] = useState(0);
 let [playerTotal2B,setPlayerTotal2B] = useState("");
+let [hideA,setHideA] = useState(false);
+let [hideB,setHideB] = useState(false);
 
 async function hit(){
 
@@ -51,9 +53,11 @@ async function initial3cards() {
       }   
     else{
        let data = await response.json();
-       setPlayerCardsA(data.playerCardsBDisplayCodes,);
-       setPlayerCardsB(data.playerCardsADisplayCodes,);
-       setDealerCards(data.dealerCardsDisplayCodes,);
+       setPlayerCardsA(data.playerCardsBDisplayCodes);
+       setPlayerCardsB(data.playerCardsADisplayCodes);
+       setDealerCards(data.dealerCardsDisplayCodes);
+       setHideB(false);
+       setHideA(true);
       // setMainPayOut(data.mainBetResult);
        setWallet(data.wallet);
        setHitBtn(data.hitBtn);
@@ -77,8 +81,8 @@ async function initial3cards() {
                 </p>
                 <img src={generateImage(dealerCards[0])} alt="dealer's card image" height={100} />
             </div>
-            <div>
-                <div style={Mainstyle.split}>
+            <div style={Mainstyle.split}>
+                <div style={{margin: 10}}>
                 <p>
                     Player's card total : {playerTotalA} {playerTotal2A}
                 </p>
@@ -86,7 +90,7 @@ async function initial3cards() {
                 <img key={index} src={generateImage(value)} alt="player's card images" height={100} />
                 )}
                 </div>   
-                <div>
+                <div style={{margin: 10}}>
                 <p>
                     Player's card total : {playerTotalB} {playerTotal2B}
                 </p>
@@ -100,8 +104,9 @@ async function initial3cards() {
                 <button disabled={hitBtn}>Stand</button>
                 <button disabled={hitBtn}>Double</button>
             </div>
-            <button onClick={() => navigate('bettingPage')}>Play Again</button>
-            <Link to="/bettingPage">Begin Game</Link>
+
+            <button onClick={() => navigate('/bettingPage')}>Play Again</button>
+            
             <div>
                 <span>Main Payout:</span> <span>{mainPayOut}</span>
                 <br/>
