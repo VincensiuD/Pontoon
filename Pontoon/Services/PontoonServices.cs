@@ -392,7 +392,29 @@ namespace Pontoon.Services
                 _applicationDbContext.SaveChanges();
             }
 
-           
+        }
+
+
+        public bool DoubleBet()
+        {
+            Wager wager = _applicationDbContext.Wagers.FirstOrDefault(x => x.Id == 1);
+            Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x=> x.Id == 1);
+
+               int mainWager = wager.MainWager;
+               int money = wallet.Money;
+
+               int newMoney = money - mainWager;
+
+                if (newMoney>=0)
+                {
+                    wager.MainWager = mainWager * 2;
+                    wallet.Money = newMoney;
+                    _applicationDbContext.SaveChanges();
+
+                    return true;
+                }
+
+                return false;                 
 
         }
     }

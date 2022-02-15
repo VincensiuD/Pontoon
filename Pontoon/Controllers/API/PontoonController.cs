@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BlackJack.Controllers.API
+namespace Pontoon.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -17,8 +17,7 @@ namespace BlackJack.Controllers.API
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly PontoonServices _pontoonServices;
-
-        private List<int> withdrawnCardsIds = new List<int>();
+     
         private List<string> dealerCardsDisplayCodes = new List<string>();
         private List<string> playerCardsDisplayCodes = new List<string>();
         private int mainBetResult = 0;
@@ -27,8 +26,6 @@ namespace BlackJack.Controllers.API
         private int dealerTotal = 0;
         private int playerTotal = 0;
         private string playerTotal2 = "";
-     //   private int playerAceOut = 0;
-     //   private int dealerAceOut = 0;
 
 
         public PontoonController(ApplicationDbContext applicationDbContext,  PontoonServices pontoonServices)
@@ -94,22 +91,7 @@ namespace BlackJack.Controllers.API
                     playerCards.Add(playerCard1);
                     playerCards.Add(playerCard2);
 
-                    //delete this later
-                    int useless = withdrawnCardsIds.Count();
-
-                    //Random random = new Random();
-
-                    //int number = 0;
-                    //for (int i = 0; i < 3; i++)
-                    //{
-                    //    do
-                    //    {
-                    //        number = random.Next(1, 417);
-                    //    } while (withdrawnCardsIds.Contains(number));
-                    //    withdrawnCardsIds.Add(number);
-
-                    //}
-
+                    
                     dealerCardsDisplayCodes.Add(dealerCard1.DisplayCode);
 
                     _applicationDbContext.SaveChanges();
@@ -145,27 +127,24 @@ namespace BlackJack.Controllers.API
                     for (int i = 0; i < playerCards.Count; i++)
                     {
                         playerCardsDisplayCodes.Add(playerCards[i].DisplayCode);
-                    }
-                    
+                    }              
 
-                    var InitialCardsDTO = new
+                    PontoonDTO dto = new PontoonDTO()
                     {
-                        dealerCardsDisplayCodes,
-                        playerCardsDisplayCodes,
-                        pairsBetResult,
-                        mainBetResult,
-                        dealerTotal = dealerCard1.Value,
-                        playerTotal,
-                        playerTotal2,
-                        wallet = wallet.Money,
-                        hitBtn,
-                        splitBtn
+                        DealerCardsDisplayCodes = dealerCardsDisplayCodes,
+                        PlayerCardsDisplayCodes = playerCardsDisplayCodes,
+                        PairsBetResult = pairsBetResult,
+                        MainBetResult = mainBetResult,
+                        DealerTotal = dealerCard1.Value,
+                        PlayerTotal = playerTotal,
+                        PlayerTotal2 = playerTotal2,
+                        Money = wallet.Money,
+                        HitBtn = hitBtn,
+                        SplitBtn = splitBtn
 
                     };
 
-
-
-                    return Ok(InitialCardsDTO);
+                    return Ok(dto);
                 }
                 catch (Exception)
                 {
@@ -188,54 +167,16 @@ namespace BlackJack.Controllers.API
             {
                 try
                 {
-                    var playerCards = _pontoonServices.GetListOfCardsFrom("Player");
+                    PontoonDTO dto = HitMethod();
 
-                    Card withdrawedCard = _pontoonServices.DrawRandomCard();
-
-                    playerCards.Add(withdrawedCard);
-                    _applicationDbContext.SaveChanges();
-
-
-                   foreach (var item in playerCards)
-                    {
-                        playerCardsDisplayCodes.Add(item.DisplayCode);
-                    }
-
-                    int playerTotal = _pontoonServices.SumCardTotal(playerCards);
-          
-                    string playerTotal2 = _pontoonServices.AceDisplayDoubleValue(playerCards, playerTotal);
-
-                    hitBtn = _pontoonServices.HitBtnStatus(playerTotal);
-
-                    int mainBetResult = _pontoonServices.CheckIfTotal21(playerTotal, playerTotal2);
-
-                    if (playerTotal < 21 && playerCards.Count == 5)
-                    {
-                       mainBetResult =  _pontoonServices.CalculatePayOut(2);
-                       hitBtn = true;                        
-                        
-                    }
-                    Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x => x.Id == 1);
-
-
-                    var withdrawedCardDTO = new
-                    {
-                        playerCardsDisplayCodes,
-                        mainBetResult,
-                        playerTotal,
-                        playerTotal2,
-                        hitBtn,
-                        wallet=wallet.Money,
-
-                    };
-
-                    return Ok(withdrawedCardDTO);
+                    return Ok(dto);
                 }
                 catch (Exception)
                 {
 
-                    return StatusCode(400);
+                    return StatusCode(401);
                 }
+               
             }
             return NotFound();
         }   
@@ -253,6 +194,7 @@ namespace BlackJack.Controllers.API
                 try
                 {
                     List<Card> dealerCards = _pontoonServices.GetListOfCardsFrom("Dealer");
+                    dealerCardsDisplayCodes.Add(dealerCards[0].DisplayCode);
                     List<Card> playerCards = _pontoonServices.GetListOfCardsFrom("Player");
 
                     int[] playerCardsIds = new int[2];
@@ -263,87 +205,39 @@ namespace BlackJack.Controllers.API
                     }
 
                     playerCards = new List<Card>();
+                 
 
                     List<Card> playerCardsA = _pontoonServices.GetListOfCardsFrom("PlayerSplit1");
                     List<Card> playerCardsB = _pontoonServices.GetListOfCardsFrom("PlayerSplit2");
 
                     playerCardsA.Add(allCardsList.FirstOrDefault(x => x.Id == playerCardsIds[0]));
+                    List<string> playerCardsADisplayCodes = new List<string>();
+                    playerCardsADisplayCodes.Add(playerCardsA[0].DisplayCode);
+
                     playerCardsB.Add(allCardsList.FirstOrDefault(x => x.Id == playerCardsIds[1]));
-
-
-                    Card withdrawnCard = _pontoonServices.DrawRandomCard();
-
-                    //dealerCardsDisplayCodes.Add(dealer.ListOfCards[0].DisplayCode);
-
-                    //foreach (var item in playerA.ListOfCards)
-                    //{
-                    //    PlayersCards playersCards = new PlayersCards()
-                    //    {
-                    //        DisplayCode = item.DisplayCode
-                    //    };
-
-                    //    _applicationDbContext.PlayersCards.Add(playersCards);
-                    //}
-                    //_applicationDbContext.SaveChanges();
-
-
-                    int mainBetResult = 0;
-
-                    //    bool pontoonOrNot = _pontoonServices.checkPontoon(playerCard1, playerCard2);
-
-
-                    //if (pontoonOrNot)
-                    //{
-                    //    mainBetResult = _pontoonServices.PontoonPayOut();
-                    //    hitBtn = true;
-                    //    splitBtn = true;
-                    //    playerTotal = 21;
-                    //}
-                    //else
-                    //{
-                    //    if (_pontoonServices.checkIfCardIsAce(playerCard1) || _pontoonServices.checkIfCardIsAce(playerCard2))
-                    //    {
-                    //        playerAceOut++;
-
-                    //        playerTotal = playerCard1.Value1 + playerCard2.Value1;
-                    //        playerTotal2 = "/ " + (playerTotal + 10).ToString();
-                    //    }
-
-                    //    else
-                    //    {
-                    //        playerTotal = playerCard1.Value1 + playerCard2.Value1;
-                    //    }
-
-
-
-                    //}
-
+                    List<string> playerCardsBDisplayCodes = new List<string>();
+                    playerCardsBDisplayCodes.Add(playerCardsB[0].DisplayCode);
+                    _applicationDbContext.SaveChanges();
+                    //   Card withdrawnCard = _pontoonServices.DrawRandomCard();
 
                     Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x => x.Id == 1);
 
-
-
-                    //foreach (var item in _applicationDbContext.PlayersCards.ToList())
-                    //{
-                    //    playerCardsDisplayCodes.Add(item.DisplayCode);
-                    //}
-
-                    var InitialCardsDTO = new
+                    PontoonDTO dto = new PontoonDTO()
                     {
-                        dealerCardsDisplayCodes,
-                        playerCardsDisplayCodes,
-                        mainBetResult,
-                        // dealerTotalA = dealerCard1.Value1,
-                        playerTotal,
-                        playerTotal2,
-                        wallet = wallet.Money,
-                        hitBtn,
+                        DealerCardsDisplayCodes = dealerCardsDisplayCodes,
+                        PlayerCardsADisplayCodes = playerCardsADisplayCodes,
+                        PlayerCardsBDisplayCodes = playerCardsBDisplayCodes,
+                        //MainBetResult,
+                        //playerTotal,
+                        //playerTotal2,
+                        Money = wallet.Money,
+                        HitBtn = false
 
                     };
 
 
 
-                    return Ok(InitialCardsDTO);
+                    return Ok(dto);
                 }
                 catch (Exception)
                 {
@@ -356,8 +250,42 @@ namespace BlackJack.Controllers.API
         }
 
 
-       
 
+        [HttpGet, Route("Doubling")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Card))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DoubleBet()
+        {
+            try
+            {
+                bool succesful = _pontoonServices.DoubleBet();
+
+                if (succesful)
+                {
+                    PontoonDTO dto = HitMethod();
+
+                    if (!dto.HitBtn) //means the player has not bust
+                    {
+                        PontoonDTO StandDto = StandMethod();
+
+                        StandDto.PlayerTotal = dto.PlayerTotal;
+                        StandDto.PlayerTotal2 = dto.PlayerTotal2;
+                        StandDto.PlayerCardsDisplayCodes = dto.PlayerCardsDisplayCodes;
+
+                        return Ok(StandDto);
+                    }
+
+                    return Ok(dto);
+                }
+
+                return StatusCode(400);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(400);
+            }
+        }
 
 
 
@@ -368,18 +296,34 @@ namespace BlackJack.Controllers.API
         {
             try
             {
+                var dto =  StandMethod();
+
+                return Ok(dto);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(401);
+            }            
+
+        }
+
+
+
+        public PontoonDTO StandMethod()
+        {
 
                 var dealerCards = _pontoonServices.GetListOfCardsFrom("Dealer");
 
                 var playerCards = _pontoonServices.GetListOfCardsFrom("Player");
-             
+
                 bool playerAceExist = _pontoonServices.AceInListChecker(playerCards);
 
                 int playerTotal = _pontoonServices.SumCardTotal(playerCards);
 
                 if (playerAceExist)
                 {
-                    playerTotal =  _pontoonServices.SumCardTotalAce(playerCards);
+                    playerTotal = _pontoonServices.SumCardTotalAce(playerCards);
                 }
 
                 string dealerTotal2string = "";
@@ -390,15 +334,15 @@ namespace BlackJack.Controllers.API
 
                     Card withdrawnCard = _pontoonServices.DrawRandomCard();
 
-                    dealerCards.Add(withdrawnCard); 
+                    dealerCards.Add(withdrawnCard);
                     _applicationDbContext.SaveChanges();
 
-                   
+
                     bool dealerAceExist = _pontoonServices.AceInListChecker(dealerCards);
 
                     if (dealerAceExist)
                     {
-                       dealerTotal = _pontoonServices.SumCardTotalAce(dealerCards);                     
+                        dealerTotal = _pontoonServices.SumCardTotalAce(dealerCards);
                     }
                     else
                     {
@@ -416,25 +360,79 @@ namespace BlackJack.Controllers.API
                 {
                     dealerCardsDisplayCodes.Add(item.DisplayCode);
                 }
+                
 
-                Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x => x.Id == 1);
-                var StandDTO = new
+                   Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x => x.Id == 1);
+              
+
+            PontoonDTO dto = new PontoonDTO()
+            {
+               // PlayerCardsDisplayCodes = playerCardsDisplayCodes,
+                DealerCardsDisplayCodes = dealerCardsDisplayCodes,
+                Money = wallet.Money,
+                MainBetResult = mainBetResult,
+                DealerTotal2 = dealerTotal2string,
+                DealerTotal = dealerTotal
+            };
+
+                return dto;
+            
+        }
+
+
+        public PontoonDTO HitMethod()
+        {
+            
+                var playerCards = _pontoonServices.GetListOfCardsFrom("Player");
+               
+                Card withdrawedCard = _pontoonServices.DrawRandomCard();
+
+                playerCards.Add(withdrawedCard);
+                _applicationDbContext.SaveChanges();
+
+
+                foreach (var item in playerCards)
                 {
-                    dealerCardsDisplayCodes,
-                    mainBetResult,
-                    dealerTotal,
-                    dealerTotal2string,
-                    wallet = wallet.Money,
+                    playerCardsDisplayCodes.Add(item.DisplayCode);
+                }
+
+                int playerTotal = _pontoonServices.SumCardTotal(playerCards);
+
+                string playerTotal2 = _pontoonServices.AceDisplayDoubleValue(playerCards, playerTotal);
+
+                hitBtn = _pontoonServices.HitBtnStatus(playerTotal);
+
+                if(hitBtn)
+                {
+                var dealerCards = _pontoonServices.GetListOfCardsFrom("Dealer");
+                dealerCardsDisplayCodes.Add(dealerCards[0].DisplayCode);
+                }
+
+                int mainBetResult = _pontoonServices.CheckIfTotal21(playerTotal, playerTotal2);
+
+                if (playerTotal < 21 && playerCards.Count == 5)
+                {
+                    mainBetResult = _pontoonServices.CalculatePayOut(2);
+                    hitBtn = true;
+
+                }
+                Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x => x.Id == 1);
+
+
+            PontoonDTO dto = new PontoonDTO()
+            {
+                    DealerCardsDisplayCodes = dealerCardsDisplayCodes,
+                    PlayerCardsDisplayCodes = playerCardsDisplayCodes,
+                    MainBetResult = mainBetResult,
+                    PlayerTotal = playerTotal,
+                    PlayerTotal2 = playerTotal2,
+                    HitBtn = hitBtn,
+                    Money = wallet.Money,
 
                 };
 
-                return Ok(StandDTO);
-            }
-            catch (Exception)
-            {
-
-                return StatusCode(400);
-            }
+            return dto;
+            
         }
     }
 }
