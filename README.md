@@ -1,5 +1,7 @@
 # Pontoon
-A variation of BlackJack game where the players have more chance to win
+A variation of BlackJack game where the players have more chance to win.
+
+Currently the game that's being developed is Pontoon Plus, a variation of Pontoon with even more advantages
 
 
 Rules:
