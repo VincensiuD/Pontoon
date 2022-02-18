@@ -303,9 +303,9 @@ namespace Pontoon.Services
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
-        public bool HitBtnStatus(int total)
+        public bool HitBtnStatus(int total, string total2)
         {
-            if (total >= 21)
+            if (total >= 21 || total2 == "/ 21")
             {
                 return true;
             }

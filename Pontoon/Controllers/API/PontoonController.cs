@@ -86,8 +86,12 @@ namespace Pontoon.Controllers.API
                     Card dealerCard1 = _pontoonServices.DrawRandomCard();
                     dealerCards.Add(dealerCard1);
 
-                    Card playerCard1 = _pontoonServices.DrawRandomCard();
-                    Card playerCard2 = _pontoonServices.DrawRandomCard();
+                      Card playerCard1 = _pontoonServices.DrawRandomCard();
+                     Card playerCard2 = _pontoonServices.DrawRandomCard();
+                    //Card playerCard1 = _applicationDbContext.Cards.FirstOrDefault(x => x.Id == 1);
+                    //Card playerCard2 = _applicationDbContext.Cards.FirstOrDefault(x => x.Id == 2);
+
+
                     playerCards.Add(playerCard1);
                     playerCards.Add(playerCard2);
 
@@ -372,16 +376,17 @@ namespace Pontoon.Controllers.API
                 
 
                    Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x => x.Id == 1);
-              
+
 
             PontoonDTO dto = new PontoonDTO()
             {
-               // PlayerCardsDisplayCodes = playerCardsDisplayCodes,
+                // PlayerCardsDisplayCodes = playerCardsDisplayCodes,
                 DealerCardsDisplayCodes = dealerCardsDisplayCodes,
                 Money = wallet.Money,
                 MainBetResult = mainBetResult,
                 DealerTotal2 = dealerTotal2string,
-                DealerTotal = dealerTotal
+                DealerTotal = dealerTotal,
+                HitBtn = true
             };
 
                 return dto;
@@ -393,10 +398,11 @@ namespace Pontoon.Controllers.API
         {
             
                 var playerCards = _pontoonServices.GetListOfCardsFrom("Player");
-               
-                Card withdrawedCard = _pontoonServices.DrawRandomCard();
 
-                playerCards.Add(withdrawedCard);
+            // Card withdrawedCard = _pontoonServices.DrawRandomCard();
+            Card withdrawedCard = _applicationDbContext.Cards.FirstOrDefault(x => x.Id == 8);
+
+            playerCards.Add(withdrawedCard);
                 _applicationDbContext.SaveChanges();
 
 
@@ -409,7 +415,9 @@ namespace Pontoon.Controllers.API
 
                 string playerTotal2 = _pontoonServices.AceDisplayDoubleValue(playerCards, playerTotal);
 
-                hitBtn = _pontoonServices.HitBtnStatus(playerTotal);
+                int mainBetResult = _pontoonServices.CheckIfTotal21(playerTotal, playerTotal2);
+
+                hitBtn = _pontoonServices.HitBtnStatus(playerTotal, playerTotal2);
 
                 if(hitBtn)
                 {
@@ -417,7 +425,7 @@ namespace Pontoon.Controllers.API
                 dealerCardsDisplayCodes.Add(dealerCards[0].DisplayCode);
                 }
 
-                int mainBetResult = _pontoonServices.CheckIfTotal21(playerTotal, playerTotal2);
+               
 
                 if (playerTotal < 21 && playerCards.Count == 5)
                 {

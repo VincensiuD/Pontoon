@@ -8,11 +8,12 @@
         public Wallet Wallet { get; set; }
         public Wager Wager { get; set; }
         public CardSequence CardSequence { get; set; }
-       // public List<Card> EigthDeckCards { get; set; }
-       public Card[] CardDecks
-        {
-            get;
-            set;
-        }
+
+        public List<Card> Deck { get; set;} = new List<Card>();
+
+
+         
+
+        
     }
 }
