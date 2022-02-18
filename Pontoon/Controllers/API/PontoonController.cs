@@ -125,8 +125,9 @@ namespace Pontoon.Controllers.API
                     }
 
 
-                    Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x => x.Id == 1);
+                    //Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x => x.Id == 1);
 
+                    var monetaryObj = _pontoonServices.MonetaryChecker();
 
                     for (int i = 0; i < playerCards.Count; i++)
                     {
@@ -142,11 +143,12 @@ namespace Pontoon.Controllers.API
                         DealerTotal = dealerCard1.Value,
                         PlayerTotal = playerTotal,
                         PlayerTotal2 = playerTotal2,
-                        Money = wallet.Money,
+                        Money = monetaryObj.Money,
                         HitBtn = hitBtn,
-                        SplitBtn = splitBtn
-
-                    };
+                        SplitBtn = splitBtn,
+                        PairsWager = monetaryObj.PairsWager,
+                        MainWager = monetaryObj.MainWager,
+                };
 
                     return Ok(dto);
                 }
@@ -233,7 +235,8 @@ namespace Pontoon.Controllers.API
                     playerCardsADisplayCodes = _pontoonServices.GetDisplayCodes(playerCardsA);
                     playerCardsBDisplayCodes = _pontoonServices.GetDisplayCodes(playerCardsB);
 
-                    Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x => x.Id == 1);
+
+                    var monetaryObj = _pontoonServices.MonetaryChecker();
 
                     PontoonDTO dto = new PontoonDTO()
                     {
@@ -243,10 +246,11 @@ namespace Pontoon.Controllers.API
                         //MainBetResult,
                         //playerTotal,
                         //playerTotal2,
-                        Money = wallet.Money,
-                        HitBtn = false
+                        Money = monetaryObj.Money,
+                        HitBtn = false,
+                        MainWager = monetaryObj.MainWager,
 
-                    };
+                };
 
 
 
@@ -373,16 +377,15 @@ namespace Pontoon.Controllers.API
                 {
                     dealerCardsDisplayCodes.Add(item.DisplayCode);
                 }
-                
 
-                   Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x => x.Id == 1);
-
+            var monetaryObj = _pontoonServices.MonetaryChecker();
 
             PontoonDTO dto = new PontoonDTO()
             {
                 // PlayerCardsDisplayCodes = playerCardsDisplayCodes,
                 DealerCardsDisplayCodes = dealerCardsDisplayCodes,
-                Money = wallet.Money,
+                Money = monetaryObj.Money,
+                MainWager = monetaryObj.MainWager,
                 MainBetResult = mainBetResult,
                 DealerTotal2 = dealerTotal2string,
                 DealerTotal = dealerTotal,
@@ -431,10 +434,16 @@ namespace Pontoon.Controllers.API
                 {
                     mainBetResult = _pontoonServices.CalculatePayOut(2);
                     hitBtn = true;
-
                 }
-                Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x => x.Id == 1);
 
+            var monetaryObj = _pontoonServices.MonetaryChecker();
+
+            int mainWagerDisplay = monetaryObj.MainWager;
+
+            if(hitBtn)
+            {
+                mainWagerDisplay = 0;
+            }
 
             PontoonDTO dto = new PontoonDTO()
             {
@@ -444,7 +453,8 @@ namespace Pontoon.Controllers.API
                     PlayerTotal = playerTotal,
                     PlayerTotal2 = playerTotal2,
                     HitBtn = hitBtn,
-                    Money = wallet.Money,
+                    Money = monetaryObj.Money,
+                    MainWager = mainWagerDisplay,
 
                 };
 
