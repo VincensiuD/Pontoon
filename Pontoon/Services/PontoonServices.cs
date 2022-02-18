@@ -436,5 +436,30 @@ namespace Pontoon.Services
                 return false;                 
 
         }
+
+        public class BettingDTO
+        {
+            public int Money { get; set; }
+            public int MainWager { get; set; }        
+            public int PairsWager { get; set; }
+        
+        }
+
+        public BettingDTO MonetaryChecker()
+        {
+            Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x => x.Id == 1);
+
+            Wager wagers = _applicationDbContext.Wagers.FirstOrDefault(x => x.Id ==1);
+
+            BettingDTO dto = new BettingDTO()
+            {
+                Money = wallet.Money,
+                MainWager = wagers.MainWager,
+                PairsWager = wagers.PairsWager,
+            };
+
+            return dto;
+        }
+        
     }
 }

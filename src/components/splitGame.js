@@ -22,6 +22,9 @@ let [playerTotal2B,setPlayerTotal2B] = useState("");
 let [hideA,setHideA] = useState(false);
 let [hideB,setHideB] = useState(false);
 
+let [mainWager,setMainWager] = useState(0);
+let [pairsWager,setPairsWager] = useState(0);
+
 async function hit(){
 
    let response = await fetch('https://localhost:44321/API/BlackJack/AddCard'); 
@@ -40,6 +43,7 @@ async function hit(){
     setPlayerTotalB(data.playerTotalB);
     setPlayerTotal2B(data.playerTotal2B);
     setHitBtn(data.hitBtn);
+    setMainWager(data.mainWager);
     }
 
 } 
@@ -61,6 +65,7 @@ async function initial3cards() {
       // setMainPayOut(data.mainBetResult);
        setWallet(data.wallet);
        setHitBtn(data.hitBtn);
+       setMainWager(data.mainWager);
       // setPlayerTotalA(data.playerTotalA);
        //setDealerTotal(data.dealerTotal);
        //setPlayerTotal2A(data.playerTotal2A);
@@ -99,6 +104,10 @@ async function initial3cards() {
                 )}
                 </div> 
             </div> 
+            <div>
+                <span>Main Wager:</span> <span>{mainWager}</span>
+                <br/>
+            </div>
             <div>
                 <button disabled={hitBtn} onClick={hit}>Hit</button>
                 <button disabled={hitBtn}>Stand</button>

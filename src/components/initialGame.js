@@ -17,8 +17,12 @@ let [splitBtn,setSplitBtn] = useState(false);
 let [dealerTotal,setDealerTotal] = useState(0);
 let [playerTotal,setPlayerTotal] = useState(0);
 let [playerTotal2,setPlayerTotal2] = useState("");
-let [message,setMessage] = useState("")
-let [endGame,setEndGame] = useState(false)
+let [message,setMessage] = useState("");
+let [endGame,setEndGame] = useState(false);
+let [mainWager,setMainWager] = useState(0);
+let [pairsWager,setPairsWager] = useState(0);
+
+
 function checkConsole() {
     console.log(playerCards);
 }
@@ -44,6 +48,8 @@ async function stand(){
     setWallet(data.money);
     setHitBtn(true);
     setSplitBtn(true);
+    setMainWager(data.mainWager);
+    setPairsWager(0);
     }
 
 }
@@ -63,6 +69,8 @@ async function double(){
      setPlayerTotal2(data.playerTotal2);
      setHitBtn(data.hitBtn);
      setSplitBtn(true);
+     setMainWager(data.mainWager);
+    setPairsWager(0);
     }
 }
 
@@ -83,6 +91,8 @@ async function hit(){
     setHitBtn(data.hitBtn);
     setSplitBtn(true);
     setWallet(data.money);
+    setMainWager(data.mainWager);
+    setPairsWager(0);
 return hitBtn;
     }
 
@@ -108,6 +118,8 @@ async function initial3cards() {
        setPlayerTotal(data.playerTotal);
        setDealerTotal(data.dealerTotal);
        setPlayerTotal2(data.playerTotal2);
+       setMainWager(data.mainWager);
+       setPairsWager(data.pairsWager);
     }
        
  }
@@ -134,6 +146,10 @@ async function initial3cards() {
                 <img key={index} src={generateImage(value)} alt="player's card images" height={100} />
                 )}
             </div>   
+            <div>
+                <span>Main Wager:</span> <span>{mainWager}</span>
+                <br/>
+            </div>
             <div>
                 <button disabled={hitBtn} onClick={hit}>Hit</button>
                 <button disabled={hitBtn} onClick={stand} >Stand</button>
