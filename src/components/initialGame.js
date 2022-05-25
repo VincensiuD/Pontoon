@@ -156,6 +156,7 @@ async function initial3cards() {
                 <button disabled={hitBtn} onClick={double}>Double</button>
                 <button disabled={splitBtn} onClick={split}>Split</button>
             </div>
+            
             <button onClick={checkConsole}>Check Console</button>
             <button onClick={() => navigate('/bettingPage')}>Play Again</button>
             <div>

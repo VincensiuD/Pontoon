@@ -461,5 +461,18 @@ namespace Pontoon.Services
             return dto;
         }
         
+        public int ResetWallet()
+        {
+            Wallet wallet = _applicationDbContext.Wallets.FirstOrDefault(x => x.Id == 1);
+
+            wallet.Money = 1000;
+
+            _applicationDbContext.SaveChanges();
+
+            return wallet.Money;
+
+        }
+
+
     }
 }

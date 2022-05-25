@@ -17,14 +17,19 @@ namespace Pontoon.Models
         public string PlayerTotal2 { get; set; }
         public string DealerTotal2 {get; set;}
         public bool HitBtn { get; set; }
+        public bool HitBtnA { get; set; }
         public bool SplitBtn { get; set; }
         public bool DoubleBtn { get; set; }
         public string DisplayMessage { get; set; }
         public List<string> PlayerCardsADisplayCodes  { get; set; }
         public List<string> PlayerCardsBDisplayCodes { get; set; }
         public int PairsWager { get; set; }
-        public int MainWager { get; set; }  
-
+        public int MainWager { get; set; }
+        public int PlayerTotalA { get; set; }
+        public int PlayerTotalB { get; set; }
+        public string PlayerTotal2A { get; set; }
+        public string PlayerTotal2B { get; set; }
+        public bool SwitchHide { get; set; }
 
     }
 

@@ -25,9 +25,60 @@ let [hideB,setHideB] = useState(false);
 let [mainWager,setMainWager] = useState(0);
 let [pairsWager,setPairsWager] = useState(0);
 
-async function hit(){
+async function hitA(){
 
-   let response = await fetch('https://localhost:44321/API/BlackJack/AddCard'); 
+   let response = await fetch('https://localhost:7100/API/Pontoon/AddCardSplit2'); 
+
+    if (!response.ok) {
+        navigate("/errorPage");
+       }   
+     else{
+    let data = await response.json();
+    console.log(data);
+    setPlayerCardsA(data.playerCardsADisplayCodes);
+    setMainPayOut(data.mainBetResult);
+    setPlayerTotalA(data.playerTotalA);
+    setPlayerTotal2A(data.playerTotal2A);
+    setHitBtn(data.hitBtn);
+    setMainWager(data.mainWager);
+    }
+
+} 
+
+async function hitB(){
+
+    let response = await fetch('https://localhost:7100/API/Pontoon/AddCardSplit1'); 
+ 
+     if (!response.ok) {
+         navigate("/errorPage");
+        }   
+      else{
+     let data = await response.json();
+     console.log(data);
+     setPlayerCardsB(data.playerCardsBDisplayCodes);
+     setMainPayOut(data.mainBetResult);
+     setPlayerTotalB(data.playerTotalB);
+     setPlayerTotal2B(data.playerTotal2B);
+     setHitBtn(data.hitBtn);
+     setMainWager(data.mainWager);
+     setHideA(data.hitBtnA);
+     setHideB(data.hitBtn);
+    }
+
+
+     
+ 
+ } 
+
+ async function standB(){
+
+    setHideA(false);
+    setHideB(true);
+ }
+
+
+ async function standA(){
+    let response = await fetch('https://localhost:7100/API/Pontoon/DealerPlay'); 
     if (!response.ok) {
         navigate("/errorPage");
         console.log("triggered")
@@ -35,18 +86,20 @@ async function hit(){
      else{
     let data = await response.json();
     console.log(data);
-    setPlayerCardsA(data.listOfPlayerCardsA);
-    setPlayerCardsB(data.listOfPlayerCardsB);
+    setDealerCards(data.dealerCardsDisplayCodes);
     setMainPayOut(data.mainBetResult);
-    setPlayerTotalA(data.playerTotalA);
-    setPlayerTotal2A(data.playerTotal2A);
-    setPlayerTotalB(data.playerTotalB);
-    setPlayerTotal2B(data.playerTotal2B);
-    setHitBtn(data.hitBtn);
+    setDealerTotal(data.dealerTotal);
+    setWallet(data.money);
+    setHitBtn(true);
     setMainWager(data.mainWager);
+    setPairsWager(0);
     }
+ }
 
-} 
+ async function disp(){
+     console.log(playerTotalA)
+     console.log(hideA);
+ }
 
 useEffect(() => { 
 async function initial3cards() {
@@ -57,20 +110,19 @@ async function initial3cards() {
       }   
     else{
        let data = await response.json();
-       setPlayerCardsA(data.playerCardsBDisplayCodes);
-       setPlayerCardsB(data.playerCardsADisplayCodes);
+       setPlayerCardsA(data.playerCardsADisplayCodes);
+       setPlayerCardsB(data.playerCardsBDisplayCodes);
        setDealerCards(data.dealerCardsDisplayCodes);
        setHideB(false);
        setHideA(true);
-      // setMainPayOut(data.mainBetResult);
-       setWallet(data.wallet);
+       setWallet(data.money);
        setHitBtn(data.hitBtn);
        setMainWager(data.mainWager);
-      // setPlayerTotalA(data.playerTotalA);
-       //setDealerTotal(data.dealerTotal);
-       //setPlayerTotal2A(data.playerTotal2A);
-       //setPlayerTotalB(data.playerTotalB);
-       //setPlayerTotal2B(data.playerTotal2B);
+       setPlayerTotalA(data.playerTotalA);
+       setDealerTotal(data.dealerTotal);
+       setPlayerTotal2A(data.playerTotal2A);
+       setPlayerTotalB(data.playerTotalB);
+       setPlayerTotal2B(data.playerTotal2B);
     }
        
  }
@@ -87,20 +139,20 @@ async function initial3cards() {
                 <img src={generateImage(dealerCards[0])} alt="dealer's card image" height={100} />
             </div>
             <div style={Mainstyle.split}>
-                <div style={{margin: 10}}>
+                <div className="hand_A" style={{margin: 10}}>
                 <p>
-                    Player's card total : {playerTotalA} {playerTotal2A}
+                    Player's A card total : {playerTotalA} {playerTotal2A}
                 </p>
                 {playerCardsA.map( (value,index) =>
-                <img key={index} src={generateImage(value)} alt="player's card images" height={100} />
+                <img key={index} src={generateImage(value)} alt="player's A card images" height={100} />
                 )}
                 </div>   
-                <div style={{margin: 10}}>
+                <div className="hand_B" style={{margin: 10}}>
                 <p>
-                    Player's card total : {playerTotalB} {playerTotal2B}
+                    Player's B card total : {playerTotalB} {playerTotal2B}
                 </p>
                 {playerCardsB.map( (value,index) =>
-                <img key={index} src={generateImage(value)} alt="player's card images" height={100} />
+                <img key={index} src={generateImage(value)} alt="player's B card images" height={100} />
                 )}
                 </div> 
             </div> 
@@ -109,9 +161,17 @@ async function initial3cards() {
                 <br/>
             </div>
             <div>
-                <button disabled={hitBtn} onClick={hit}>Hit</button>
-                <button disabled={hitBtn}>Stand</button>
-                <button disabled={hitBtn}>Double</button>
+               <div>
+                     <button  hidden={hideA} disabled={hitBtn} onClick={hitA}>Hit A</button>
+                     <button hidden={hideA} disabled={hitBtn} onClick={standA}>Stand A</button>
+                     <button hidden={hideA} disabled={hitBtn} >Double</button>
+               </div>
+               <div>
+                     <button hidden={hideB} disabled={hitBtn} onClick={hitB}>Hit </button>
+                     <button hidden={hideB} disabled={hitBtn} onClick={standB}>Stand</button>
+                     <button hidden={hideB} disabled={hitBtn} >Double</button>
+                     <button onClick={disp}>Console </button>
+               </div>
             </div>
 
             <button onClick={() => navigate('/bettingPage')}>Play Again</button>
